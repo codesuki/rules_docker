@@ -154,8 +154,12 @@ func main() {
 		Proxy:                 http.ProxyFromEnvironment,
 	}
 
-	if err := pull(*imgName, *directory, *cachePath, platform, t); err != nil {
-		log.Fatalf("Image pull was unsuccessful: %v", err)
+	uri := strings.Split(*imgName, "/")
+	uri[0] = "mirror.gcr.io"
+	if err := pull(strings.Join(uri, "/"), *directory, *cachePath, platform, t); err != nil {
+		if err := pull(*imgName, *directory, *cachePath, platform, t); err != nil {
+			log.Fatalf("Image pull was unsuccessful: %v", err)
+		}
 	}
 
 	log.Printf("Successfully pulled image %q into %q", *imgName, *directory)
